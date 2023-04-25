@@ -1,10 +1,10 @@
-/*
- Copyright (c) 2014-2015 NicoHood
- See the readme for credit to other people.
- Serial HID-Bridge USB
- Select HoodLoader16u2 as board.
- After upload make sure the 16u2 sketch runs, not the HoodLoader2 bootloader.
- This example will type any serial data via keyboard.
+/*    INTERNET ADVISOR KEYBOARD CONTROL
+ *
+ *    Recieves encoded keypresses from the 2560 and uses the keyboard library to type them on the computer
+ *
+ *    Written by Nicco Scanu for the Rose-Hulman Linux User Group
+ *    Based on the HID-Bridge USB example by NicoHood
+ *
 */
 
 #include "Keyboard.h"
