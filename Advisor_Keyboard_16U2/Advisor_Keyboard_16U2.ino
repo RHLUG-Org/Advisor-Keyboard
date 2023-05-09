@@ -9,25 +9,6 @@
 
 #include "Keyboard.h"
 #include "HID.h"
-int incomingByte = 0; // for incoming serial data
-const int NUM_GREEN = 14;
-const int NUM_BLUE = 8;
-int keyMap[NUM_GREEN][NUM_BLUE] = {
-  {KEY_P, KEY_BACKSLASH, KEY_EQUALS, KEY_A, KEY_SEMICOLON, KEY_RETURN, KEY_A, KEY_A},
-  {KEY_O, KEY_A, KEY_MINUS, KEY_A, KEY_L, KEY_BACKSLASH, KEY_A, KEY_A},
-  {KEY_I, KEY_A, KEY_0, KEY_A, KEY_K, KEY_COMMA, KEY_SLASH, KEY_A},
-  {KEY_U, KEY_H, KEY_9, KEY_A, KEY_J, KEY_M, KEY_PERIOD, KEY_A},
-  {KEY_Y, KEY_G, KEY_8, KEY_A, KEY_F, KEY_N, KEY_A, KEY_A},
-  {KEY_T, KEY_r, KEY_7, KEY_A, KEY_D, KEY_B, KEY_C, KEY_A},
-  {KEY_4, KEY_E, KEY_6, KEY_A, KEY_S, KEY_V, KEY_X, KEY_SPACE},
-  {KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A},
-  {KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A},
-  {KEY_3, KEY_W, KEY_5, KEY_A, KEY_A, KEY_SPACE, KEY_Z, KEY_SPACE},
-  {KEY_2, KEY_Q, KEY_A, KEY_A, KEY_A, KEY_1, KEY_A, KEY_A},
-  {KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A},
-  {KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A},
-  {KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A, KEY_A},
-};
 
 void setup() {
   // Start the Serial1 which is connected with the IO MCU.
@@ -56,11 +37,24 @@ void loop() {
   //}
   if (Serial1.available() > 0) {
     // read the incoming byte:
-    incomingByte = Serial1.read();
+    String str = Serial1.readStringUntil('\n');
 
     // say what you got:
-    Serial.print(F("[IO MCU]: "));
-    Serial.write(incomingByte);
+    Serial.print("[IO MCU]: ");
+    Serial.print(str[0]);
+    if(str[2] == '1'){
+      if(str[0] == 14){
+        Keyboard.press(KEY_LEFT_SHIFT);
+      }else {
+        Keyboard.press(str[0]);
+      }
+    } else if (str[2] == '0'){
+      if(str[0] == 14){
+        Keyboard.release(KEY_LEFT_SHIFT);
+      }else {
+        Keyboard.release(str[0]);
+      }
+    }
     Serial.print("\n");
   }
 

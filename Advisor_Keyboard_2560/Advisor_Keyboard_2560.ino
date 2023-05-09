@@ -10,20 +10,20 @@ const int NUM_BLUE = 8;
 int greenPins[NUM_GREEN] = {2, 20, 4, 5, 16, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 int bluePins[NUM_BLUE] = {18, 19, 17, 21, 22, 23, 24, 25};
 char keyMap[NUM_GREEN][NUM_BLUE] = {
-  {'p', '\\', '=', 'a', ';', '\n', 'a', 'a'},
-  {'o', 'a', '-', 'a', 'l', '\'', 'a', 'a'},
-  {'i', 'a', '0', 'a', 'k', ',', '/', 'a'},
-  {'u', 'h', '9', 'a', 'j', 'm', '.', 'a'},
-  {'y', 'g', '8', 'a', 'f', 'n', 'a', 'a'},
+  {'p', '\\', '=', 'a', ';', 176, 218, 217},
+  {'o', ']', '-', 'a', 'l', '\'', 215, 216},
+  {'i', '[', '0', 'a', 'k', ',', '/', 'a'},
+  {'u', 'h', '9', 'a', 'j', 'm', '.', 209},
+  {'y', 'g', '8', 'a', 'f', 'n', 'a', '`'},
   {'t', 'r', '7', 'a', 'd', 'b', 'c', 'a'},
   {'4', 'e', '6', 'a', 's', 'v', 'x', ' '},
+  {'a', 'a', 'a', 'a', 'a', 'a', 'a', 130},
   {'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a'},
-  {'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a'},
-  {'3', 'w', '5', 'a', 'a', ' ', 'z', ' '},
-  {'2', 'q', 'a', 'a', 'a', '1', 'a', 'a'},
-  {'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a'},
-  {'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a'},
-  {'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a'},
+  {'3', 'w', '5', 'a', 'a', 193, 'z', 179},
+  {'2', 'q', 'a', 'a', 'a', '1', 'a', 177},
+  {'a', 'a', 'a', 'a', 'a', 'a', 'a', 128},
+  {'a', 'a', 'a', 'a', 'a', 'a', 133, 129},
+  {8, 'a', 'a', 'a', 'a', 'a', 'a', 215},
 };
 
 int pressed[NUM_GREEN][NUM_BLUE];
@@ -52,21 +52,26 @@ void loop() {
     for(int j = 0; j < NUM_GREEN; j++){
        if(!digitalRead(greenPins[j])){
         if(pressed[j][i] == 0){
-          Serial.println("?")
-          Serial.println(i);
-          Serial.println(j);
-          Serial.println("?");
+          Serial.write(keyMap[j][i]);
+          Serial.println(" 1");
           pressed[j][i] = 1;
         }
-        /*Serial.print("(");
-        Serial.print(j);
-        Serial.print(", ");
-        Serial.print(i);
-        Serial.print(") pressed\n");*/
+//        Serial.print("(");
+//        Serial.print(j);
+//        Serial.print(", ");
+//        Serial.print(i);
+//        Serial.print(") pressed\n");
         
         //Serial.write('\n');
        } else {
-        pressed[j][i] = 0;
+        //Serial.write(keyMap[j][i]);
+        //Serial.println(" 0");
+        //pressed[j][i] = 0;
+        if(pressed[j][i] == 1){
+          Serial.write(keyMap[j][i]);
+          Serial.println(" 0");
+          pressed[j][i] = 0;
+        }
        }
     }
     digitalWrite(bluePins[i], HIGH);
