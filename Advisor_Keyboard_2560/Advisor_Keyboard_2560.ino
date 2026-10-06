@@ -2,14 +2,14 @@
  *
  *    Reads the pins from the advisor's keyboard and determine which key is pressed. Then sends the info to the 16U2.
  *
- *    Written by Nicco Scanu for the Rose-Hulman Linux User Group
+ *    Written by Nicco Scanu and Andrew Grasman for the Rose-Hulman Linux User Group
  *
 */
 
 
 
 #include <Adafruit_NeoPixel.h>
-#include "Keyboard.h"
+#include <Keyboard.h>
 
 #define LED_PIN 26
 #define LED_COUNT 30
@@ -54,7 +54,18 @@ char functionMap[NUM_GREEN][NUM_BLUE] = { //Alternate map to be used when the FN
   {KEY_PAUSE, KEY_END, KEY_RIGHT_ARROW, KEY_PAGE_UP, KEY_PAGE_DOWN, KEY_PRINT_SCREEN, KEY_BACKSPACE, KEY_HOME},
 };
 
+const int FN_GREEN = 3;
+const int FN_BLUE = 2;
+
 int pressed[NUM_GREEN][NUM_BLUE];
+char sentKey[NUM_GREEN][NUM_BLUE]; // HID code actually sent for this matrix position
+
+char keyForPosition(int g, int b) {
+  if(pressed[FN_GREEN][FN_BLUE] == 1){
+    return functionMap[g][b];
+  }
+  return keyMap[g][b];
+}
 
 void setup() {
   Serial.begin(115200);
@@ -63,8 +74,10 @@ void setup() {
   // Sends a clean report to the host. This is important on any Arduino type.
   Keyboard.begin();
 
+  // Idle columns as high-Z so holding one key does not fight other columns.
   for(int i = 0; i < NUM_BLUE; i++){
-      pinMode(bluePins[i], OUTPUT);
+      digitalWrite(bluePins[i], LOW);
+      pinMode(bluePins[i], INPUT);
   }
   for(int i = 0; i < NUM_GREEN; i++){
      pinMode(greenPins[i], INPUT_PULLUP);
@@ -72,6 +85,7 @@ void setup() {
   for(int g = 0; g < NUM_GREEN; g++){
     for(int b = 0; b < NUM_BLUE; b++){
       pressed[g][b] = 0;
+      sentKey[g][b] = 0;
     }
   }
 
@@ -86,54 +100,48 @@ void releaseAllKeys() {
   for(int g = 0; g < NUM_GREEN; g++){
     for(int b = 0; b < NUM_BLUE; b++){
       if(pressed[g][b] == 1){ //Release any key currently pressed through software
-        Keyboard.release(keyMap[g][b]);
-        Keyboard.release(functonMap[g][b]);
+        Keyboard.release(sentKey[g][b]);
         Serial.printf("(%d, %d) released\n", g, b);
       }
       pressed[g][b] = 0;
+      sentKey[g][b] = 0;
     }
   }
 }
 
 void loop() {
-
   for(int i = 0; i < NUM_BLUE; i++) {
+    pinMode(bluePins[i], OUTPUT);
     digitalWrite(bluePins[i], LOW);
+    delayMicroseconds(10);
+
     for(int j = 0; j < NUM_GREEN; j++){
-       if(!digitalRead(greenPins[j])){
+      bool isDown = !digitalRead(greenPins[j]);
+
+      if(isDown){
         if(pressed[j][i] == 0){
-          if(j == 3 && i == 2){//FN was just pressed
+          if(j == FN_GREEN && i == FN_BLUE){//FN was just pressed
             releaseAllKeys();
           }
-          char keyToPress;
-          if(pressed[3][2] == 1){ //FN is currently being held down
-            keyToPress = functionMap[j][i];
-          } else { //FN is not pressed, use the regular map
-            keyToPress = keyMap[j][i];
-          }
-          
-          Keyboard.press(keyToPress);
-          Serial.printf("%c (%d, %d) pressed\n", keyToPress, j, i);
-          pressed[j][i] = 1;
-        }
-       } else {
-        if(pressed[j][i] == 1){
-          if(j == 3 && i == 2){//FN was just released
-              releaseAllKeys();
-          }
-          char keyToPress;
-          if(pressed[3][2] == 1){ //FN is currently being held down
-            keyToPress = functionMap[j][i];
-          } else { //FN is not pressed, use the regular map
-            keyToPress = keyMap[j][i];
-          }
 
-          Keyboard.release(keyToPress);
-          Serial.printf("%c (%d, %d) released\n", keyToPress, j, i);
-          pressed[j][i] = 0;
+          char keyToPress = keyForPosition(j, i);
+          Keyboard.press(keyToPress);
+          sentKey[j][i] = keyToPress;
+          pressed[j][i] = 1;
+          Serial.printf("%c (%d, %d) pressed\n", keyToPress, j, i);
         }
-       }
+      } else if(pressed[j][i] == 1){
+        if(j == FN_GREEN && i == FN_BLUE){//FN was just released
+          releaseAllKeys();
+        } else {
+          Keyboard.release(sentKey[j][i]);
+          Serial.printf("%c (%d, %d) released\n", sentKey[j][i], j, i);
+          pressed[j][i] = 0;
+          sentKey[j][i] = 0;
+        }
+      }
     }
-    digitalWrite(bluePins[i], HIGH);
-  } 
+
+    pinMode(bluePins[i], INPUT); // high-Z so other columns can be scanned independently
+  }
 }
