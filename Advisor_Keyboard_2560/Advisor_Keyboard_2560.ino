@@ -32,7 +32,7 @@ char keyMap[NUM_GREEN][NUM_BLUE] = { //Map keys to ASCII character and Keyboard.
   {'9', '.', 'a', 'j', 'm', KEY_F9, 'u', 'h'},
   {'0', '/', '5', 'k', ',', KEY_F10, 'i', '['},
   {'-', 'q', KEY_LEFT_ARROW, 'l', '\'', KEY_NUM_LOCK, 'o', ']'},
-  {'+', KEY_UP_ARROW, KEY_DOWN_ARROW, ';', KEY_RETURN, KEY_SCROLL_LOCK, 'p', '\\'},
+  {'=', KEY_UP_ARROW, KEY_DOWN_ARROW, ';', KEY_RETURN, KEY_SCROLL_LOCK, 'p', '\\'},
   {'a', KEY_RIGHT_SHIFT, KEY_LEFT_SHIFT, 'a', 'a', 'a', 133, 129},
   {KEY_PAUSE, KEY_END, KEY_RIGHT_ARROW, KEY_PAGE_UP, KEY_PAGE_DOWN, KEY_PRINT_SCREEN, KEY_BACKSPACE, KEY_HOME},
 };
@@ -49,7 +49,7 @@ char functionMap[NUM_GREEN][NUM_BLUE] = { //Alternate map to be used when the FN
   {KEY_KP_9, '.', 'a', KEY_KP_1, KEY_KP_0, KEY_F19, KEY_KP_4, 'h'},
   {KEY_KP_ASTERISK, KEY_KP_SLASH, '5', KEY_KP_2, ',', KEY_F20, KEY_KP_5, '['},
   {'-', 'q', KEY_LEFT_ARROW, KEY_KP_3, '\'', KEY_NUM_LOCK, KEY_KP_6, ']'},
-  {'+', KEY_UP_ARROW, KEY_DOWN_ARROW, KEY_KP_PLUS, KEY_RETURN, KEY_SCROLL_LOCK, KEY_KP_MINUS, '\\'},
+  {'=', KEY_UP_ARROW, KEY_DOWN_ARROW, KEY_KP_PLUS, KEY_RETURN, KEY_SCROLL_LOCK, KEY_KP_MINUS, '\\'},
   {'a', KEY_RIGHT_SHIFT, KEY_LEFT_SHIFT, 'a', 'a', 'a', 133, 129},
   {KEY_PAUSE, KEY_END, KEY_RIGHT_ARROW, KEY_PAGE_UP, KEY_PAGE_DOWN, KEY_PRINT_SCREEN, KEY_BACKSPACE, KEY_HOME},
 };
